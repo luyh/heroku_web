@@ -1,7 +1,7 @@
 import requests
 import time
 
-def get_fear_greed_index(limit = 0):
+def get_fear_greed_index(limit = 1):
     url = 'https://api.alternative.me/fng/?limit={}'.format(limit)
     #print(url)
     r = requests.get(url)
