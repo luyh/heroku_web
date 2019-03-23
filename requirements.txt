@@ -3,3 +3,8 @@ gunicorn
 django-heroku
 requests
 APScheduler==3.0.0
+backtrader
+ccxt
+selenium
+matplotlib
+time
