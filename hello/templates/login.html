@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="ui-mobile"><head><base href="http://hpg.sqk2.cn/public/apprentice.php/passport/login.html?callback=/public/apprentice.php/task/index.html">
+
+    <meta charset="utf-8">
+    <title>T - 上海发传单</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="/public/static/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.css"><link rel="stylesheet" type="text/css" href="/public/static/css/mobile.css">
+
+
+
+<style type="text/css">
+    .remember-password.ui-flipswitch .ui-btn.ui-flipswitch-on {
+        text-indent: -6.5em;
+    }
+
+    .remember-password.ui-flipswitch .ui-flipswitch-off {
+        text-indent: 0.3em;
+    }
+
+    .remember-password.ui-flipswitch {
+        width: 8.875em;
+    }
+
+    .remember-password.ui-flipswitch.ui-flipswitch-active {
+        padding-left: 7em;
+        width: 1.875em;
+    }
+
+    @media (min-width: 28em) {
+        /*Repeated from rule .ui-flipswitch above*/
+        &nbsp;.ui-field-contain > label + .remember-password.ui-flipswitch {
+            width: 1.875em;
+        }
+    }
+
+    #bottom-operation {
+        margin-top: 1em;
+        float: left;
+        width: 100%;
+    }
+    #bottom-operation .find-password{
+        font-size: 1em;
+        text-decoration: none;
+        float: left;
+        margin-top: 0.75em;
+    }
+
+    #bottom-operation div.right{
+        float: right;
+    }
+</style>
+
+
+</head>
+<body class="ui-mobile-viewport ui-overlay-a" style="">
+<script>
+    var WebsitePath = {
+        'root': "/public",
+        'static': "/public/static",
+        'js': "/public/static/js",
+        'css': "/public/static/css"
+    };
+
+    var MobileFrontEndConfig = {"upload_image_quality":"0.2","upload_image_max_width":"1024","upload_image_max_height":"1024"};
+    if (Object && 'freeze' in Object) {
+        WebsitePath = Object.freeze(WebsitePath);
+        if(MobileFrontEndConfig){
+            MobileFrontEndConfig = Object.freeze(MobileFrontEndConfig);
+        }
+    }
+</script>
+<script type="text/javascript" src="/public/static/jquery-2.1.1/jquery.min.js"></script><script type="text/javascript" src="/public/static/js/jquery.cookie.js"></script><script type="text/javascript" src="/public/static/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="/public/static/js/mobile.js?v=181117"></script>
+<script type="text/javascript" src="/public/static/js/jquery.md5.js"></script>
+<div data-role="page" id="main-page" data-title="T - 上海发传单" data-url="main-page" tabindex="0" class="ui-page ui-page-theme-a ui-page-header-fixed ui-page-active" style="padding-top: 44px; min-height: 768px;">
+
+
+    <div data-role="header" data-position="fixed" data-tap-toggle="false" role="banner" class="ui-header ui-bar-inherit ui-header-fixed slidedown">
+                <h1 class="ui-title" role="heading" aria-level="1">登录</h1>
+
+    </div>
+
+
+
+    <div data-role="content" class="ui-content" role="main">
+
+<form id="login-form">
+    <input type="hidden" id="callback" value="/public/apprentice.php/task/index.html">
+    <div data-role="fieldcontain" class="ui-field-contain">
+        <label for="username">账号:</label>
+        <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset ui-input-has-clear"><input type="text" data-clear-btn="true" name="username" id="username" value="" placeholder="请输入账号"><a href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden" title="Clear text">Clear text</a></div>
+    </div>
+    <div data-role="fieldcontain" class="ui-field-contain">
+        <label for="password">密码:</label>
+        <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset ui-input-has-clear"><input type="password" data-clear-btn="true" name="password" id="password" value="" placeholder="请输入密码"><a href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden" title="Clear text">Clear text</a></div>
+    </div>
+    &nbsp;&nbsp;<div class="ui-flipswitch ui-shadow-inset ui-bar-inherit remember-password ui-corner-all"><a href="#" class="ui-flipswitch-on ui-btn ui-shadow ui-btn-inherit">记住账号密码</a><span class="ui-flipswitch-off">记住账号密码</span><input type="checkbox" class="ui-mini ui-flipswitch-input" data-role="flipswitch" name="remember" id="remember" data-on-text="记住账号密码" data-off-text="记住账号密码" data-wrapper-class="remember-password" tabindex="-1"></div>
+</form>
+<a href="#" class="ui-btn ui-corner-all ui-shadow" id="login-btn">登录</a>
+
+<div id="bottom-operation" class="clearfix">
+
+    <a href="/public/apprentice.php/user/forget_password.html" data-ajax="false" class="find-password ui-link">忘记密码？</a>
+        <div class="right">还没有账号？<a href="/public/apprentice.php/passport/register.html" class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-ajax="false" data-inline="true">立即注册</a></div>
+    </div>
+
+    </div>
+
+
+
+</div>
+
+
+<div data-role="page" data-dialog="true" id="find-password-page" data-url="find-password-page">
+    <div data-role="header">
+        <h1>找回密码</h1>
+    </div>
+
+    <div data-role="main" class="ui-content"> <p>请联系客服找回密码，联系方式：</p><p style="text-align: center;">微信：xxxxxxxxxx</p><p style="text-align: center;">QQ：xxxxxxxxxx</p></div>
+
+</div>
+
+
+
+<script>
+    $(document).on("pageinit", "#main-page", function () {
+        $("#login-btn").on('click', function () {
+            var $username = $("#username"), $password = $("#password");
+            if (!$username.val() || $username.val().length < 5) {
+//                $.mobile.ls.popupDialog('请输入正确的账号', [{
+//                    after: function () {
+//                        $username[0].focus();
+//                    }
+//                }]);
+                $username.lsSetValidateMessage('请输入正确的账号', 'error');
+                $username[0].focus();
+                return;
+            }else {
+                $username.lsRemoveValidateMessage();
+            }
+            if (!$password.val() || $password.val().length < 5) {
+//                $.mobile.ls.popupDialog('请输入正确的密码', [{
+//                    after: function () {
+//                        $password[0].focus();
+//                    }
+//                }]);
+                $password.lsSetValidateMessage('请输入正确的密码', 'error');
+                $password[0].focus();
+                return;
+            }else {
+                $password.lsRemoveValidateMessage();
+            }
+            login();
+        });
+
+        function login() {
+            var data = {
+                username: $("#username").val(),
+                password: $("#password").val(),
+                remember: $("#remember").is(':checked') ? 1 : 0,
+                callback: $("#callback").val(),
+                t: Math.random()
+            };
+            if (!data.password || data.password.length != 32) {
+                data.password = $.md5(data.password);
+            }
+
+            $.post("/public/apprentice.php/passport/ajax_login.html", data, function (data, textStatus) {
+                try {
+                    if(!(data = $.mobile.ls.handleResponseJson(data))) return;
+                    if (!data.success) {
+                        $.mobile.ls.popupDialog(data.msg || '未知错误');
+                        return;
+                    }
+                    location.href = data.url;
+                } catch (e) {
+                    consoleLog(e);
+                    $.mobile.ls.popupDialog('数据异常');
+                }
+            });
+        }
+    });
+</script>
+
+
+
+<div class="ui-loader ui-corner-all ui-body-a ui-loader-default"><span class="ui-icon-loading"></span><h1>loading</h1></div></body></html>
