@@ -1,10 +1,11 @@
-from django.urls import path, include
+from django.urls import include, path , re_path
 
 from django.contrib import admin
 
 admin.autodiscover()
 
 import hello.views
+import hpg.views
 
 # To add a new path, first import the app:
 # import blog
@@ -19,4 +20,6 @@ urlpatterns = [
     path("login/", hello.views.login, name="login"),
     path("db/", hello.views.db, name="db"),
     path("admin/", admin.site.urls),
+    path('hello/', hello.views.hello),
+    path('zkb/', hpg.views.zkb,name = 'zkb'),
 ]
