@@ -80,12 +80,13 @@ if __name__ == '__main__':
                     search_pic = image.url_to_image( url )
                     # cv2.imshow( "search_pic", search_pic )
                     # cv2.waitKey( 0 )
-                    hist = image.classify_hist_with_split( good_pic, search_pic )
+                    hist = image.classify_hist_with_split( good_pic, search_pic)
                     # ahash = image.classify_aHash( good_pic, search_pic )
                     # phash = image.classify_pHash( good_pic, search_pic )
-                    print( 'page:{},hist:{}'.format(page,hist) )
+                    print( 'page:{},id:{},hist:{}'.format(page,good['id'],hist) )
                     if hist >0.99:
-                        print('找到类似图片',hist,good['good_url'])
+                        find_url = good['good_url']
+                        print('找到类似图片',hist,find_url)
                         find =True
                         break
 

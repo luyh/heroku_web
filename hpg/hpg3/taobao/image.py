@@ -30,16 +30,19 @@ def resize(img):
     return res
 
 
-def url_to_image(url,name = 'pic'):
+def url_to_image(url,name = 'pic',count =4):
+    try:
+        if count >0:
+            resp = urllib.request.urlopen( url )
+            image = np.asarray(bytearray(resp.read()), dtype="uint8")
+            image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+            return image
+        else:
+            print('下载图片出错')
+    except:
+        url_to_image(url,name,count-1)
 
-    resp = urllib.request.urlopen( url )
-    image = np.asarray( bytearray( resp.read() ), dtype="uint8" )
 
-    image = cv2.imdecode( image, cv2.IMREAD_COLOR )
-    # r = requests.get( url )
-    # with open( r'./pic/{}.jpg'.format(i+'-'+name.replace('/', '')), 'wb' ) as f:
-    #     f.write( r.content )
-    return image
 
 
 # 最简单的以灰度直方图作为相似比较的实现

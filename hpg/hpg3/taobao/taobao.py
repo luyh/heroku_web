@@ -53,7 +53,8 @@ class Taobao(Chrome):
         goods = []
         print( len( hrefs ), len( pic_urls ) )
         for i in range( len( hrefs ) ):
-            info = {'name':pic_urls[i].get_attribute( 'alt' ),
+            info = {    'id':i,
+                        'name':pic_urls[i].get_attribute( 'alt' ),
                          'pic_url':'http://' + pic_urls[i].get_attribute( 'data-src' )[2:] ,
                           'good_url':hrefs[i].get_attribute( 'href' )
                          }
