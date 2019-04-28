@@ -99,8 +99,8 @@ if __name__ == '__main__':
     #     except:
     #         print('click error')
         data_value = next_page.get_attribute( 'data-value' )
-        next_page_url = next_page_url.replace('')
-        print( next_page.text, data_value, next_page_url.)
+        #TODO:next_page_url = next_page_url.replace('')
+        print( next_page.text, data_value, next_page_url)
 
         test.driver.get(next_page_url)
         time.sleep(3)
