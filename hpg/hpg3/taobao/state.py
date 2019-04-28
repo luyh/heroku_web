@@ -46,7 +46,7 @@ class Taobao_thread(threading.Thread):
 
             threadLock.release()
 
-            time.sleep(60)
+            time.sleep(30)
 
 
 import requests
@@ -68,10 +68,12 @@ if __name__ == '__main__':
             print( 'taobao搜索关键词：{}'.format( taobao_thread.task['keyword'] ) )
             taobao.search( taobao_thread.task['keyword'] )
             print( taobao_thread.task['main_link'] )
+            time.sleep(3)
 
             good_pic = image.url_to_image( taobao_thread.task['main_link'] )
             # cv2.imshow( "good", good_pic )
             # cv2.waitKey( 0 )
+
 
             for page in range(5):
 
@@ -89,13 +91,13 @@ if __name__ == '__main__':
                     # phash = image.classify_pHash( good_pic, search_pic )
                     print( hist )
                     if hist >0.99:
-                        print(hist)
+                        print('找到类似图片',hist,url)
                         break
 
-                taobao.get_next_page()
+                taobao.get_next_page(page)
                 time.sleep( round( random.uniform( 3, 8 ), 2 ) )
 
             time.sleep(300)
 
-        time.sleep(30)
+        time.sleep(15)
         print('END')

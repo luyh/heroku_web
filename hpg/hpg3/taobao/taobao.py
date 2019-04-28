@@ -5,7 +5,7 @@ from hpg.hpg3.ulity.china_time import chinatime
 import os,time
 from selenium.webdriver.common.keys import Keys
 import random
-
+import re
 class Taobao(Chrome):
     def __init__(self,name='taobao'):
         self.driver = None
@@ -32,6 +32,13 @@ class Taobao(Chrome):
         taobao_search.clear()
         taobao_search.send_keys( key )
         taobao_search.send_keys( Keys.ENTER )
+        time.sleep(3)
+
+        next_page_xpath = '//*[@id="mainsrp-pager"]/div/div/div/ul/li[8]/a'
+        next_page = self.driver.find_element_by_xpath(next_page_xpath)
+        self.next_page_url = next_page.get_attribute('href')
+        self.offset = "& bcoffset = 3 & ntoffset = 3 & p4ppushleft = 1 % 2C48 & s = "
+
 
     def mtaobao(self):
         js="window.open('http://m.taobao.com');"
@@ -56,54 +63,22 @@ class Taobao(Chrome):
 
         return goods
 
-    def get_next_page(self):
-        next_page_xpath = '//*[@id="mainsrp-pager"]/div/div/div/ul/li[8]/a'
+    def get_next_page(self,i):
+        data_value = (i+1) + 44
+        url = (self.next_page_url + self.offset + str(data_value)).replace(' ', '').replace('#', '')
+        print('第{}页'.format(i+2), data_value, url)
+        self.driver.get(url)
+        time.sleep(3)
 
-        next_page = self.driver.find_element_by_xpath( next_page_xpath )
-        #next_page_js = 'document.getElementByXpath(“{}”).scrollIntoViewIfNeeded();'.format( next_page_xpath )
-
-        # scroll = round( random.uniform( 3, 8 ), 2 ) * 100
-        # for t in range(int(random.uniform( 3, 5 ))):
-        #     time.sleep( round( random.uniform( 1, 5 ), 2 ) )
-        #     js = "window.scrollTo(0,{});".format(scroll)
-        #     print(js)
-        #     self.driver.execute_script( js)
-        #     scroll = scroll +round( random.uniform( 3, 8 ), 2 ) * 100
-
-        # try:
-        #     self.driver.execute_script(next_page_js)
-        # except:
-        #     print('滑动到下一页出错')
-
-        # try:
-        #     next_page.click()
-        #     print('点击下一页成功')
-        # except:
-        #     print('点击下一页出错，直接跳转')
-        next_page_url = next_page.get_attribute( 'href' )
-        print(next_page.text,next_page_url)
-        self.driver.get(next_page_url)
 
 if __name__ == '__main__':
     test = Taobao()
 
     test.connectChrome()
+    #test.chek_login()
+    test.search('裤子')
 
-    next_page_xpath = '//*[@id="mainsrp-pager"]/div/div/div/ul/li[8]/a'
-    next_page = test.driver.find_element_by_xpath( next_page_xpath )
-    next_page_url = next_page.get_attribute( 'href' )
-    for i in range(5):
-    #     test.driver.execute_script( "window.scrollTo(0,document.body.scrollHeight)" )
-    #     try:
-    #         next_page.click()
-    #     except:
-    #         print('click error')
-        data_value = next_page.get_attribute( 'data-value' )
-        #TODO:next_page_url = next_page_url.replace('')
-        print( next_page.text, data_value, next_page_url)
+    data_value =0
 
-        test.driver.get(next_page_url)
-        time.sleep(3)
-        # test.driver.refresh()
 
 
