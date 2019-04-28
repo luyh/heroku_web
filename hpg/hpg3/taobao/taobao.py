@@ -6,6 +6,8 @@ import os,time
 from selenium.webdriver.common.keys import Keys
 import random
 import re
+from urllib.parse import urlencode
+
 class Taobao(Chrome):
     def __init__(self,name='taobao'):
         self.driver = None
@@ -69,6 +71,34 @@ class Taobao(Chrome):
         print('第{}页'.format(i+2), data_value, url)
         self.driver.get(url)
         time.sleep(3)
+
+    def get_url(self,key_word, number_two):
+        '''
+            获取关键字的链接
+            :param keyword:    关键字
+            :param number_two:    不同的数值对应不同的页码，淘宝上第一页为0 ，第二页为44
+                                   第三页为88.。。。
+            :return:   不同页码的链接
+        '''
+        data = {
+            'ie': 'utf8',
+            'initiative_id': 'staobaoz_20180830',
+            'stats_click': 'search_radio_all:1',
+            'js': '1',
+            'imgfile': ' ',
+            'q': key_word,
+            'suggest': 'history_3',
+            '_input_charset': 'utf - 8',
+            'wq': ' ',
+            'suggest_query': ' ',
+            'source': 'suggest',
+            'bcoffset': '6',
+            'ntoffset': '6',
+            'p4ppushleft': '1, 48',
+            's': number_two
+        }
+        url = r'https://s.taobao.com/search?' + urlencode(data)
+        return url
 
 
 if __name__ == '__main__':

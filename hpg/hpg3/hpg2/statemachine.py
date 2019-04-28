@@ -74,7 +74,7 @@ class HPG_thread(threading.Thread):
             hpg.driver.refresh()
         else:
             self.received = False
-            time.sleep( 30 )
+            time.sleep( 15 )
             hpg.driver.refresh()
 
 if __name__ == '__main__':

@@ -5,6 +5,9 @@ import time
 from hpg.hpg3.hpg2.statemachine import HPG_thread
 from hpg.hpg3.taobao import image
 import os
+import requests
+import cv2
+import random
 
 threadLock = threading.Lock()
 threads = []
@@ -44,15 +47,9 @@ class Taobao_thread(threading.Thread):
                 self.received = True
                 self.task = hpg.task
 
+            taobao.driver.refresh()
             threadLock.release()
-
             time.sleep(30)
-
-
-import requests
-import cv2
-
-import random
 
 
 
@@ -64,22 +61,19 @@ if __name__ == '__main__':
     taobao_thread.start()
 
     while True:
+        find = False
         if taobao_thread.received:
-            print( 'taobao搜索关键词：{}'.format( taobao_thread.task['keyword'] ) )
-            taobao.search( taobao_thread.task['keyword'] )
-            print( taobao_thread.task['main_link'] )
-            time.sleep(3)
-
             good_pic = image.url_to_image( taobao_thread.task['main_link'] )
-            # cv2.imshow( "good", good_pic )
-            # cv2.waitKey( 0 )
-
-
             for page in range(5):
-
+                if find == True:
+                    break
+                url = taobao.get_url(taobao_thread.task['keyword'], page*44)
+                print(url)
+                taobao.driver.get(url)
+                time.sleep(3)
                 goods = taobao.get_goods()
                 # print( goods )
-
+                find = False
                 for good in goods:
                     url = good['pic_url']
                     #print(url)
@@ -89,13 +83,13 @@ if __name__ == '__main__':
                     hist = image.classify_hist_with_split( good_pic, search_pic )
                     # ahash = image.classify_aHash( good_pic, search_pic )
                     # phash = image.classify_pHash( good_pic, search_pic )
-                    print( hist )
+                    print( 'page:{},hist:{}'.format(page,hist) )
                     if hist >0.99:
-                        print('找到类似图片',hist,url)
+                        print('找到类似图片',hist,good['good_url'])
+                        find =True
                         break
 
-                taobao.get_next_page(page)
-                time.sleep( round( random.uniform( 3, 8 ), 2 ) )
+                time.sleep( round( random.uniform(1, 3 ), 2 ) )
 
             time.sleep(300)
 
