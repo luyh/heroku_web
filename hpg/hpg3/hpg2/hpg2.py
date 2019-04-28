@@ -1,15 +1,9 @@
-from base import BASE
-from chrome.connect_chrome import Chrome
-from ulity import china_time,send_email
+from hpg.hpg3.chrome.connect_chrome import Chrome
+from hpg.hpg3.ulity import china_time,send_email
 import os,time
 
-import threading
 
-threadLock = threading.Lock()
-threads = []
-
-
-class HPG(BASE,Chrome):
+class HPG(Chrome):
     def __init__(self,name = 'hpg',debug = False,mobileEmulation = None):
         self.name = name
         self.driver = None
@@ -73,34 +67,56 @@ class HPG(BASE,Chrome):
             if self.login():
                 return True
 
-    def queue_task(self):
+    def queue_task(self,normal = True):
         #print( '检查我要买' )
         if self.driver.current_url == self.task_url:
-            try:
-                normal_task = self.driver.find_element_by_id( 'normal-task' )
-                activity_task = self.driver.find_element_by_id( 'activity-task' )
+            if normal:
+                try:
+                    normal_task = self.driver.find_element_by_id( 'normal-task' )
+                    activity_task = self.driver.find_element_by_id( 'activity-task' )
 
-                if normal_task.text == '停止' and activity_task.text == '停止':
-                    return True
+                    if normal_task.text == '停止' and activity_task.text == '停止':
+                        return True
 
-                elif normal_task.text == '我要买' and activity_task.text == '活动单':
-                    normal_task.click()
-                    time.sleep( 1 )
-                    activity_task.click()
-                    time.sleep( 1 )
-                    print(self.now.getChinaTime(),'已订阅任务')
-                    return True
+                    elif normal_task.text == '我要买' and activity_task.text == '活动单':
+                        normal_task.click()
+                        time.sleep( 1 )
+                        activity_task.click()
+                        time.sleep( 1 )
+                        print(self.now.getChinaTime(),'已订阅任务')
+                        return True
 
-                else:return False
+                    else:return False
 
-            except:
-                return False
+                except:
+                    return False
+
+            else:
+                try:
+                    traffic_task = self.driver.find_element_by_id('traffic-task'  )
+
+                    if traffic_task.text == '停止':
+                        return True
+
+                    elif traffic_task.text == '我要找':
+                        traffic_task.click()
+                        time.sleep( 1 )
+                        print( self.now.getChinaTime(), '已订阅任务' )
+                        return True
+
+                    else:
+                        print( '没找到流量任务我要买1' )
+                        return False
+
+                except:
+                    #print('没找到流量任务我要买2')
+                    return False
 
         else:
             print('open:{}'.format(self.task_url))
             self.driver.get(self.task_url)
             time.sleep(3)
-            self.queue_task()
+            self.queue_task(normal)
 
     def receive_task(self):
         #print('检查领取状态')
@@ -123,7 +139,6 @@ class HPG(BASE,Chrome):
                     print( '已领取任务，快做单' )
                     self.getTaskInfo()
                     print( '任务详情：',self.taskInfo )
-                    send_email.send_email( '接到hpg任务', self.now.getChinaTime() )
                     send_email.send_email( '接到hpg任务', str(self.taskInfo ))
 
                     time.sleep(3)
@@ -145,7 +160,7 @@ class HPG(BASE,Chrome):
     def getTaskInfo(self):
         key_word = self.driver.find_element_by_xpath( '//*[@id="task-container"]/div[2]/div/input').get_attribute( 'value' )
         #print(key_word)
-        main_link = self.driver.find_element_by_xpath( '//*[@id="task-container"]/div[3]/img').get_attribute( 'src' )
+        main_link = self.driver.find_element_by_xpath( '//*[@id="task-container"]/*/img').get_attribute( 'src' )
         #print(main_link)
         price = self.driver.find_element_by_xpath( '//*[@id="task-container"]/div[4]' ).text
         remarks_word = self.driver.find_element_by_xpath( '//*[@id="goods-validate-hint"]' ).text
@@ -156,6 +171,8 @@ class HPG(BASE,Chrome):
                          'remarks_word': remarks_word,
 
                          }
+        return self.taskInfo
+
 
 
 
