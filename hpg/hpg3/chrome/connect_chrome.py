@@ -66,12 +66,15 @@ class Chrome():
         options = webdriver.ChromeOptions()
         if self.mobileEmulation != None:
             options.add_experimental_option( 'mobileEmulation', self.mobileEmulation )
-
+        #options.add_argument('detach = True')
         # 连接Chrome
         print(u'正在新建chrome浏览器...')
         if systerm.startswith('darwin'):
 
-            driver = webdriver.Chrome(executable_path='/Users/Hebbelu/Downloads/chromedriver', \
+            #options.add_argument( "user-data-dir='~/Library/Application''Support/Google/Chrome/Default'" )
+
+            #options.add_argument( '–disk-cache-dir=./cache' )
+            driver = webdriver.Chrome('/Users/Hebbelu/Downloads/chromedriver', 0,\
                                       chrome_options=options)
         elif systerm.startswith('linux'):
             driver = webdriver.Chrome(chrome_options=options)

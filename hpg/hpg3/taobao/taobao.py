@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 import random
 import re
 from urllib.parse import urlencode
+import json
 
 class Taobao(Chrome):
     def __init__(self,name='taobao'):
@@ -23,9 +24,11 @@ class Taobao(Chrome):
         # TODO:发送淘宝二维码给手机淘宝扫码登陆
 
     def chek_login(self):
-        print('请检查登陆taobao')
-        self.driver.get("https://www.taobao.com")
-        time.sleep(5)
+        self.driver.get( 'https://www.taobao.com' )
+        for item in cookies:
+            self.driver.add_cookie( item )
+
+        self.driver.get( 'https://www.taobao.com' )
         return True
 
     def search(self,key = 'python'):
@@ -100,16 +103,23 @@ class Taobao(Chrome):
         }
         url = r'https://s.taobao.com/search?' + urlencode(data)
         return url
-
+from hpg.hpg3.taobao.taobao_cookie import cookies
 
 if __name__ == '__main__':
     test = Taobao()
 
     test.connectChrome()
-    #test.chek_login()
-    test.search('裤子')
 
-    data_value =0
+    test.driver.get('https://www.taobao.com')
+    for item in cookies:
+        test.driver.add_cookie( item )
+
+    test.driver.get( 'https://www.taobao.com' )
+    url = test.get_url( '裤子', 0 )
+    test.driver.get(url)
+    time.sleep(10)
+
+
 
 
 
