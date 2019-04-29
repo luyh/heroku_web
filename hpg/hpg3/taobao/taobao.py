@@ -8,6 +8,11 @@ import random
 import re
 from urllib.parse import urlencode
 import json
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class Taobao(Chrome):
     def __init__(self,name='taobao'):
@@ -16,12 +21,39 @@ class Taobao(Chrome):
 
         self.taskInfo = None
 
-    def login(self):
-        print( '打开taobao' )
-        self.driver.get( "https://login.taobao.com" )
-        print( self.driver.title )
-        print( '请自行完成登陆操作' )
-        # TODO:发送淘宝二维码给手机淘宝扫码登陆
+    # 登录淘宝
+    def login(self,weibo_username,weibo_password):
+        # 打开网页
+        url = 'https://login.taobao.com/member/login.jhtml'
+        self.driver.get( url )
+
+        # 等待 密码登录选项 出现
+        password_login = self.wait.until(
+            EC.presence_of_element_located( (By.CSS_SELECTOR, '.qrcode-login > .login-links > .forget-pwd') ) )
+        password_login.click()
+
+        # 等待 微博登录选项 出现
+        weibo_login = self.wait.until( EC.presence_of_element_located( (By.CSS_SELECTOR, '.weibo-login') ) )
+        weibo_login.click()
+
+        # 等待 微博账号 出现
+        weibo_user = self.wait.until( EC.presence_of_element_located( (By.CSS_SELECTOR, '.username > .W_input') ) )
+        weibo_user.send_keys( weibo_username )
+
+        # 等待 微博密码 出现
+        weibo_pwd = self.wait.until( EC.presence_of_element_located( (By.CSS_SELECTOR, '.password > .W_input') ) )
+        weibo_pwd.send_keys( weibo_password )
+
+        # 等待 登录按钮 出现
+        submit = self.wait.until( EC.presence_of_element_located( (By.CSS_SELECTOR, '.btn_tip > a > span') ) )
+        submit.click()
+
+        # 直到获取到淘宝会员昵称才能确定是登录成功
+        taobao_name = self.wait.until( EC.presence_of_element_located( (By.CSS_SELECTOR,
+                                                                        '.site-nav-bd > ul.site-nav-bd-l > li#J_SiteNavLogin > div.site-nav-menu-hd > div.site-nav-user > a.site-nav-login-info-nick ') ) )
+        # 输出淘宝昵称
+        print( taobao_name.text )
+
 
     def chek_login(self):
         self.driver.get( 'https://www.taobao.com' )
@@ -29,6 +61,13 @@ class Taobao(Chrome):
             self.driver.add_cookie( item )
 
         self.driver.get( 'https://www.taobao.com' )
+
+        # 直到获取到淘宝会员昵称才能确定是登录成功
+        taobao_name = self.wait.until( EC.presence_of_element_located( (By.CSS_SELECTOR,
+                                                                        '.site-nav-bd > ul.site-nav-bd-l > li#J_SiteNavLogin > div.site-nav-menu-hd > div.site-nav-user > a.site-nav-login-info-nick ') ) )
+        # 输出淘宝昵称
+        print( taobao_name.text )
+
         return True
 
     def search(self,key = 'python'):
@@ -109,12 +148,17 @@ if __name__ == '__main__':
     test = Taobao()
 
     test.connectChrome()
+    # weibo_username=os.environ.get( 'weibo_username' )
+    # weibo_password=os.environ.get( 'weibo_password' )
+    # test.login(weibo_username,weibo_password)
 
     test.driver.get('https://www.taobao.com')
     for item in cookies:
         test.driver.add_cookie( item )
 
     test.driver.get( 'https://www.taobao.com' )
+
+
     url = test.get_url( '裤子', 0 )
     test.driver.get(url)
     time.sleep(10)

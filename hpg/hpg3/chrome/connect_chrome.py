@@ -52,6 +52,7 @@ class Chrome():
                 browser.title
                 print( '已连上chrome参数为:{}'.format( params ) )
                 self.driver = browser
+                self.wait = WebDriverWait( self.driver, 10 )  # 超时时长为10s
                 return True
             except :
                 print( 'chrome not reachable，连接chrome失败' )

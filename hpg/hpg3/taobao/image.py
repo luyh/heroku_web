@@ -33,15 +33,15 @@ import datetime
 def url_to_image(url,count =4):
     try:
         if count >0:
-            starttime = datetime.datetime.now()
+            #starttime = datetime.datetime.now()
             resp = requests.get( url )
-            endtime = datetime.datetime.now()
-            print('下载图片用时:', (endtime - starttime).seconds, url)
+            #endtime = datetime.datetime.now()
+            #print('下载图片用时:', (endtime - starttime).seconds, url)
 
-            starttime = datetime.datetime.now()
+            #starttime = datetime.datetime.now()
             image = cv2.imdecode(np.fromstring(resp.content, np.uint8), 1)
-            endtime = datetime.datetime.now()
-            print('opencv读取图片用时:', (endtime - starttime).seconds, url)
+            #endtime = datetime.datetime.now()
+            #print('opencv读取图片用时:', (endtime - starttime).seconds, url)
 
             return image
         else:

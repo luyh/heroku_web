@@ -65,23 +65,23 @@ if __name__ == '__main__':
         find = False
         if taobao_thread.received:
             good_pic = image.url_to_image( taobao_thread.task['main_link'] )
-            for page in range(5):
+            for page in range(10):
                 if find == True:
                     break
                 url = taobao.get_url(taobao_thread.task['keyword'], page*44)
                 print(url)
                 taobao.driver.get(url)
-                time.sleep(3)
+                time.sleep(1)
                 goods = taobao.get_goods()
                 # print( goods )
                 find = False
                 for good in goods:
                     url = good['pic_url']
                     #print(url)
-                    starttime = datetime.datetime.now()
+                    #starttime = datetime.datetime.now()
                     search_pic = image.url_to_image( url )
-                    endtime = datetime.datetime.now()
-                    print('下载及读取图片用时:',(endtime - starttime).seconds,url)
+                    #endtime = datetime.datetime.now()
+                    #print('下载及读取图片用时:',(endtime - starttime).seconds,url)
                     # cv2.imshow( "search_pic", search_pic )
                     # cv2.waitKey( 0 )
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
                     # ahash = image.classify_aHash( good_pic, search_pic )
                     # phash = image.classify_pHash( good_pic, search_pic )
                     print( 'page:{},id:{},hist:{}'.format(page,good['id'],hist) )
-                    if hist >0.99:
+                    if hist ==1:
                         find_url = good['good_url']
                         print('找到类似图片',hist,find_url)
                         find =True
