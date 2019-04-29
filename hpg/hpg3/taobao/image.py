@@ -57,9 +57,9 @@ def classify_gray_hist(image1, image2, size=(256, 256)):
     hist1 = cv2.calcHist( [image1], [0], None, [256], [0.0, 255.0] )
     hist2 = cv2.calcHist( [image2], [0], None, [256], [0.0, 255.0] )
     # 可以比较下直方图
-    plt.plot( range( 256 ), hist1, 'r' )
-    plt.plot( range( 256 ), hist2, 'b' )
-    plt.show()
+    # plt.plot( range( 256 ), hist1, 'r' )
+    # plt.plot( range( 256 ), hist2, 'b' )
+    # plt.show()
     # 计算直方图的重合度
     degree = 0
     for i in range( len( hist1 ) ):
