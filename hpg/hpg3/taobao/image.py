@@ -28,19 +28,26 @@ def resize(img):
     print(res.dtype)
 
     return res
+import datetime
 
-
-def url_to_image(url,name = 'pic',count =4):
+def url_to_image(url,count =4):
     try:
         if count >0:
-            resp = urllib.request.urlopen( url )
-            image = np.asarray(bytearray(resp.read()), dtype="uint8")
-            image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+            starttime = datetime.datetime.now()
+            resp = requests.get( url )
+            endtime = datetime.datetime.now()
+            print('下载图片用时:', (endtime - starttime).seconds, url)
+
+            starttime = datetime.datetime.now()
+            image = cv2.imdecode(np.fromstring(resp.content, np.uint8), 1)
+            endtime = datetime.datetime.now()
+            print('opencv读取图片用时:', (endtime - starttime).seconds, url)
+
             return image
         else:
             print('下载图片出错')
     except:
-        url_to_image(url,name,count-1)
+        url_to_image(url,count-1)
 
 
 
@@ -151,7 +158,7 @@ def Hamming_distance(hash1, hash2):
     return num
 
 
-if __name__ == '__main__':
+def test():
 
     # initialize the list of image URLs to download
     urls = [
@@ -189,4 +196,11 @@ if __name__ == '__main__':
 
 
     #cv2.waitKey( 0 )
+
+def test_get_image():
+    url = 'http://g-search1.alicdn.com/img/bao/uploaded/i4/i4/503335886/TB2z8jGnviSBuNkSnhJXXbDcpXa_!!503335886.jpg'
+    url_to_image(url)
+
+if __name__ == '__main__':
+    test_get_image()
 

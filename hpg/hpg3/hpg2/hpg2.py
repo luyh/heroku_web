@@ -163,10 +163,12 @@ class HPG(Chrome):
         main_link = self.driver.find_element_by_xpath( '//*[@id="task-container"]/*/img').get_attribute( 'src' )
         #print(main_link)
         price = self.driver.find_element_by_xpath( '//*[@id="task-container"]/div[4]' ).text
+        task_remark = self.driver.find_element_by_xpath('//*[@id="task-container"]/div[5]').text
         remarks_word = self.driver.find_element_by_xpath( '//*[@id="goods-validate-hint"]' ).text
         #print(price,remarks_word)
         self.taskInfo = {'keyword': key_word,
                          'main_link': main_link,
+                         'task_remark':task_remark,
                          'price': price,
                          'remarks_word': remarks_word,
 

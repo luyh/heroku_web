@@ -8,6 +8,7 @@ import os
 import requests
 import cv2
 import random
+import datetime
 
 threadLock = threading.Lock()
 threads = []
@@ -77,10 +78,17 @@ if __name__ == '__main__':
                 for good in goods:
                     url = good['pic_url']
                     #print(url)
+                    starttime = datetime.datetime.now()
                     search_pic = image.url_to_image( url )
+                    endtime = datetime.datetime.now()
+                    print('下载及读取图片用时:',(endtime - starttime).seconds,url)
                     # cv2.imshow( "search_pic", search_pic )
                     # cv2.waitKey( 0 )
+
+                    #starttime = datetime.datetime.now()
                     hist = image.classify_hist_with_split( good_pic, search_pic)
+                    #endtime = datetime.datetime.now()
+                    #print('比较图片用时:', (endtime - starttime).seconds)
                     # ahash = image.classify_aHash( good_pic, search_pic )
                     # phash = image.classify_pHash( good_pic, search_pic )
                     print( 'page:{},id:{},hist:{}'.format(page,good['id'],hist) )
