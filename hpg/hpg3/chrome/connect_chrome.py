@@ -6,27 +6,30 @@ import time,sys
 import threading
 from hpg.hpg3.ulity import china_time
 
+
 # 打印系统系统
 systerm = sys.platform
 print( '系统类型:', systerm )
 
-
-
 class Refresh(threading.Thread):
-    def __init__(self,driver,delay = 30):
+    def __init__(self,driver,threadLock,delay = 60):
         threading.Thread.__init__(self)
         self.threadID = 'refreshChrome_thread'
         self.delay = delay
         self.driver = driver
+        self.driver.implicitly_wait( 5 )  # 隐性等待，最长等30秒
+
+        self.threadLock = threadLock
 
     def run(self):
-        now = china_time.ChinaTime()
+        #now = china_time.ChinaTime()
+        print('{}每{}秒刷新chrome'.format(self.name,self.delay))
         while(1):
-            threadLock.acquire()
-            print(now.getChinaTime(),'刷新chrome')
+            self.threadLock.acquire()
+            #print(now.getChinaTime(),'刷新chrome')
             self.driver.refresh()
-            time.sleep(3)
-            threadLock.release()
+            time.sleep(1)
+            self.threadLock.release()
 
             time.sleep(self.delay)
 
@@ -42,7 +45,7 @@ class Chrome():
     def connectChrome(self):
         print( '正在读取{}.data 尝试连接chrome:{}'.format( self.name,self.name ) )
         try:
-            f = open( "{}.data".format(self.name), 'rb' )
+            f = open( "./{}.data".format(self.name), 'rb' )
             # 从文件中载入对象
             params = pickle.load( f )
             # print( params )
@@ -106,8 +109,8 @@ class Chrome():
         f.close()
         #print('已保存chrome参数至{}.data' .format(self.name))
 
-    def start_refresh_thread(self,delay = 30):
-        thread = Refresh(self.driver,delay)
+    def start_refresh_thread(self,delay = 60):
+        thread = Refresh(self.driver,self.threadLock,delay)
         print('Starting Refresh Chrome Thread')
         thread.start()
 

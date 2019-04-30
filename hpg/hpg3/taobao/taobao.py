@@ -13,11 +13,14 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import threading
+from selenium.common.exceptions import NoSuchElementException
 
 class Taobao(Chrome):
     def __init__(self,name='taobao'):
         self.driver = None
         self.name = name
+        self.threadLock = threading.Lock()
 
         self.taskInfo = None
 
@@ -56,19 +59,43 @@ class Taobao(Chrome):
 
 
     def chek_login(self):
-        self.driver.get( 'https://www.taobao.com' )
         for item in cookies:
             self.driver.add_cookie( item )
 
-        self.driver.get( 'https://www.taobao.com' )
+        self.driver.get( 'https://login.taobao.com/member/login.jhtml' )
+        time.sleep(1)
 
-        # 直到获取到淘宝会员昵称才能确定是登录成功
-        taobao_name = self.wait.until( EC.presence_of_element_located( (By.CSS_SELECTOR,
-                                                                        '.site-nav-bd > ul.site-nav-bd-l > li#J_SiteNavLogin > div.site-nav-menu-hd > div.site-nav-user > a.site-nav-login-info-nick ') ) )
-        # 输出淘宝昵称
-        print( taobao_name.text )
+        self.get_qrcode_img_link_address()
+
+        # while True:
+        #     try:
+        #         if self.driver.find_element_by_link_text( "密码登录" ):
+        #             print("请扫码登录...")
+        #             time.sleep( 1 )
+        #             try:
+        #                 if self.driver.find_element_by_link_text( "请点击刷新" ):
+        #                     self.driver.find_element_by_link_text( "请点击刷新" ).click()
+        #                     time.sleep( 1 )
+        #                     self.get_qrcode_img_link_address()
+        #             except NoSuchElementException:
+        #                 time.sleep( 1 )
+        #                 continue
+        #     except NoSuchElementException:
+        #         print("成功登录...")
+        #         print(self.driver.current_url)
+        #         break
 
         return True
+
+    def get_qrcode_img_link_address(self):
+        try:
+            if self.driver.find_element_by_id( "J_QRCodeImg" ):
+                print('get the QRCodeImgUrl.....')
+                print(self.driver.find_element_by_id( "J_QRCodeImg" ).find_element_by_tag_name( "img" ).get_attribute( "src" ))
+                return True
+        except NoSuchElementException:
+
+            return False
 
     def search(self,key = 'python'):
         self.chek_login()
@@ -157,13 +184,11 @@ if __name__ == '__main__':
         test.driver.add_cookie( item )
 
     test.driver.get( 'https://www.taobao.com' )
-
+    time.sleep(2)
 
     url = test.get_url( '裤子', 0 )
     test.driver.get(url)
     time.sleep(10)
-
-
 
 
 

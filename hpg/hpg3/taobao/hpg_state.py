@@ -1,9 +1,7 @@
 from transitions.extensions import HierarchicalMachine as Machine
-from hpg.hpg3.hpg2 import hpg2
+import hpg2
 import threading
 import time
-threadLock = threading.Lock()
-threads = []
 
 hpg = hpg2.HPG()
 
@@ -39,43 +37,37 @@ machine.add_transition( 'ReceiveTask', '*', 'connectedChrome_loginHPG_receivedTa
 
 
 class HPG_thread(threading.Thread):
+
+
     def __init__(self,normal = True):
         threading.Thread.__init__( self )
-        self.connect_chrome()
         self.normal = normal
         self.received = False
         self.task = None
 
+        hpg.connect_chrome()
+        hpg.start_refresh_thread( delay=60 )
+
+
     def run(self):
         while True:
-            self.quere_up_task()
+            hpg.threadLock.acquire()
 
-    def connect_chrome(self):
-        print( hpg.state )
-        hpg.connect_chrome()
+            old_state = hpg.state
+            hpg.CheckLogin()
 
-    def quere_up_task(self):
-        hpg.CheckLogin()
+            if hpg.is_connectedChrome_loginHPG( allow_substates=True ):
+                hpg.QuereTask( self.normal )
+                hpg.ReceiveTask()
 
-        if hpg.is_connectedChrome_loginHPG( allow_substates=True ):
-            hpg.QuereTask( self.normal )
-            hpg.ReceiveTask()
+            if hpg.state != old_state:
+                print( hpg.now.getChinaTime(), hpg.state )
 
-        print( hpg.now.getChinaTime(), hpg.state )
+            hpg.threadLock.release()
 
-        if hpg.is_connectedChrome_loginHPG_receivedTask():
-            print( '接到任务' )
-            threadLock.acquire()
-            self.received = True
-            self.task = hpg.getTaskInfo()
-            print(self.task)
-            threadLock.release()
-            time.sleep( 60 )
-            hpg.driver.refresh()
-        else:
-            self.received = False
-            time.sleep( 15 )
-            hpg.driver.refresh()
+            time.sleep( 5 )
+
+
 
 if __name__ == '__main__':
     test = HPG_thread(normal= False)

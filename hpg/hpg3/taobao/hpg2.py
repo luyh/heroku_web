@@ -1,15 +1,21 @@
 from hpg.hpg3.chrome.connect_chrome import Chrome
 from hpg.hpg3.ulity import china_time,send_email
 import os,time
+import threading
+
 
 
 class HPG(Chrome):
     def __init__(self,name = 'hpg',debug = False,mobileEmulation = None):
         self.name = name
         self.driver = None
+        self.threadLock = threading.Lock()
 
         self.username = os.environ.get( 'HPG_USER' )  # 用户名
         self.password = os.environ.get( 'HPG_PASS' )  #
+
+        if self.username==None:
+            print('hpg用户名为空')
 
         self.login_url = 'http://hpg.sqk2.cn/public/apprentice.php/passport/login.html'
         self.task_url= 'http://hpg.sqk2.cn/public/apprentice.php/task/index.html'
@@ -32,8 +38,6 @@ class HPG(Chrome):
 
     def login(self):
         if self.driver.current_url in self.login_url:
-            self.driver.refresh()
-            time.sleep( 5 )
             try:
                 # 输入用户名及密码
                 username_element = self.driver.find_element_by_id( self.username_id )
@@ -46,7 +50,6 @@ class HPG(Chrome):
 
                 login_element = self.driver.find_element_by_id( self.login_button_id )
                 login_element.click()
-                time.sleep( 2 )
                 print( '已登陆HPG，完成初始化操作' )
 
                 return True
@@ -57,7 +60,7 @@ class HPG(Chrome):
         else:
             print( '登陆hpg：{}'.format( self.login_url ) )
             self.driver.get(self.login_url)
-            time.sleep( 3 )
+            time.sleep( 1 )
             self.login()
 
     def check_login(self):
@@ -80,9 +83,9 @@ class HPG(Chrome):
 
                     elif normal_task.text == '我要买' and activity_task.text == '活动单':
                         normal_task.click()
-                        time.sleep( 1 )
+                        #time.sleep( 1 )
                         activity_task.click()
-                        time.sleep( 1 )
+                        #time.sleep( 1 )
                         print(self.now.getChinaTime(),'已订阅任务')
                         return True
 
@@ -115,16 +118,28 @@ class HPG(Chrome):
         else:
             print('open:{}'.format(self.task_url))
             self.driver.get(self.task_url)
-            time.sleep(3)
+            time.sleep(1)
             self.queue_task(normal)
 
     def receive_task(self):
         #print('检查领取状态')
         if self.driver.current_url == self.task_url:
+
+            #试着去找任务弹窗，刷新页面
+            try:
+                popop_task_item = self.driver.find_element_by_id('lsCustomDialog171125')
+                time.sleep(2)
+                self.driver.refresh()
+                time.sleep(4)
+            except:
+                pass
+
+
             try:
                 self.receiveButton = self.driver.find_element_by_xpath(self.receive_btn_xpath)
 
                 if self.receiveButton.text == '请先验证宝贝':
+                    self.getTaskInfo()
                     return True
 
                 elif self.receiveButton.text == '领取':
@@ -174,6 +189,76 @@ class HPG(Chrome):
 
                          }
         return self.taskInfo
+
+    def check_goods(self,url):
+        try:
+            validate_item = self.driver.find_element_by_id('goods-validate-content')
+            validate_item.send_keys( url )
+            time.sleep(0.5)
+
+            btn_item = self.driver.find_element_by_id('goods-validate-btn')
+            btn_item.click()
+            time.sleep(0.5)
+
+            check_item=self.driver.find_element_by_id('goods-validate-message')
+            print(check_item.get_attribute('class'))
+            if check_item.get_attribute('class')=='pass':
+                return True
+            else:
+                return False
+
+        except:
+            print('验证商品失败')
+
+    def cancle(self):
+        try:
+            cancle_element = self.driver.find_element_by_xpath('//*[@id="operation"]/a[1]')
+            #print(cancle_element.text)
+            self.driver.execute_script( "window.scrollTo(0,document.body.scrollHeight)" )
+            cancle_element.click()
+
+            try:
+                yes_element = self.driver.find_element_by_xpath('//*[@id="lsCustomDialog171125"]/div[2]/div[2]/div[2]/a')
+                yes_element.click()
+            except:
+                print('没找到确认按钮')
+        except:
+            print('没找到取消按钮')
+
+    def submit(self):
+        try:
+            submit_element = self.driver.find_element_by_xpath('//*[@id="operation"]/a[1]')
+            self.driver.execute_script( "window.scrollTo(0,document.body.scrollHeight)" )
+            submit_element.click()
+
+            try:
+                yes_element = self.driver.find_element_by_xpath('//*[@id="lsCustomDialog171125"]/div[2]/div[2]/div[2]/a')
+                yes_element.click()
+            except:
+                print('没找到确认按钮')
+
+        except:
+            print( '没找到提交按钮' )
+
+if __name__ == '__main__':
+    #测试验证链接
+    hpg = HPG()
+    hpg.connectChrome()
+    hpg.check_login()
+    print('订阅任务')
+    hpg.queue_task()
+    hpg.receive_task()
+
+
+    url = 'https://detail.tmall.com/item.htm?spm=a230r.1.999.1.1977523cbUeuju&id=590600308842&ns=1&sku_properties=5919063:6536025'
+    print( '验证' )
+    if hpg.check_goods(url):
+        hpg.submit()
+    else:
+        hpg.cancle()
+
+
+
 
 
 
