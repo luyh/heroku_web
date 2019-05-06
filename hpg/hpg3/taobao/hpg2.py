@@ -212,6 +212,7 @@ class HPG(Chrome):
 
     def cancle(self):
         try:
+            print('取消任务')
             cancle_element = self.driver.find_element_by_xpath('//*[@id="operation"]/a[1]')
             #print(cancle_element.text)
             self.driver.execute_script( "window.scrollTo(0,document.body.scrollHeight)" )
@@ -219,6 +220,7 @@ class HPG(Chrome):
 
             try:
                 yes_element = self.driver.find_element_by_xpath('//*[@id="lsCustomDialog171125"]/div[2]/div[2]/div[2]/a')
+                self.driver.execute_script( "window.scrollTo(0,document.body.scrollHeight)" )
                 yes_element.click()
             except:
                 print('没找到确认按钮')
@@ -227,35 +229,41 @@ class HPG(Chrome):
 
     def submit(self):
         try:
-            submit_element = self.driver.find_element_by_xpath('//*[@id="operation"]/a[1]')
+            print('提交任务')
+            submit_element = self.driver.find_element_by_xpath('//*[@id="operation"]/a[2]')
             self.driver.execute_script( "window.scrollTo(0,document.body.scrollHeight)" )
             submit_element.click()
 
-            try:
-                yes_element = self.driver.find_element_by_xpath('//*[@id="lsCustomDialog171125"]/div[2]/div[2]/div[2]/a')
-                yes_element.click()
-            except:
-                print('没找到确认按钮')
-
         except:
             print( '没找到提交按钮' )
+
+    def today_finish(self):
+            try:
+                today = self.driver.find_element_by_xpath('//*[@id="main-page"]/div[2]/div[4]/div[1]/div[1]/b')
+                self.today = int(today.text)
+                return self.today
+            except:
+                pass
 
 if __name__ == '__main__':
     #测试验证链接
     hpg = HPG()
     hpg.connectChrome()
     hpg.check_login()
+
+    hpg.today_finish()
+    exit()
     print('订阅任务')
     hpg.queue_task()
     hpg.receive_task()
 
 
-    url = 'https://detail.tmall.com/item.htm?spm=a230r.1.999.1.1977523cbUeuju&id=590600308842&ns=1&sku_properties=5919063:6536025'
+    url = 'https://detail.tmall.com/item.htm?id=567531156975&ns=1&abbucket=9'
     print( '验证' )
     if hpg.check_goods(url):
         hpg.submit()
-    else:
-        hpg.cancle()
+    # else:
+    #     hpg.cancle()
 
 
 

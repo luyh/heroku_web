@@ -59,10 +59,11 @@ class Taobao(Chrome):
 
 
     def chek_login(self):
-        for item in cookies:
-            self.driver.add_cookie( item )
 
         self.driver.get( 'https://login.taobao.com/member/login.jhtml' )
+
+        for item in cookies:
+            self.driver.add_cookie( item )
         time.sleep(1)
 
         self.get_qrcode_img_link_address()
@@ -120,7 +121,7 @@ class Taobao(Chrome):
         hrefs = self.driver.find_elements_by_xpath( "//*[@id='mainsrp-itemlist']//div[@class='pic']/a" )
         pic_urls = self.driver.find_elements_by_xpath( "//*[@id='mainsrp-itemlist']//div[@class='pic']/a/img" )
         goods = []
-        print( len( hrefs ), len( pic_urls ) )
+        #print( len( hrefs ), len( pic_urls ) )
         for i in range( len( hrefs ) ):
             info = {    'id':i,
                         'name':pic_urls[i].get_attribute( 'alt' ),

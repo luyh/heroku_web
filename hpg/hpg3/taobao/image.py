@@ -3,7 +3,7 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 import requests
-
+from hpg.hpg3.ulity.china_time import chinatime
 import urllib
 
 def read_img(name):
@@ -30,7 +30,7 @@ def resize(img):
     return res
 import datetime
 
-def url_to_image(url,count =4):
+def url_to_image(url,count =3):
     try:
         if count >0:
             #starttime = datetime.datetime.now()
@@ -45,7 +45,7 @@ def url_to_image(url,count =4):
 
             return image
         else:
-            print('下载图片出错')
+            print('第{}次下载图片出错'.format(4-count))
     except:
         url_to_image(url,count-1)
 
@@ -94,18 +94,33 @@ def calculate(image1, image2):
 
 
 # 通过得到每个通道的直方图来计算相似度
-def classify_hist_with_split(image1, image2, size=(256, 256)):
-    # 将图像resize后，分离为三个通道，再计算每个通道的相似值
-    image1 = cv2.resize( image1, size )
-    image2 = cv2.resize( image2, size )
-    sub_image1 = cv2.split( image1 )
-    sub_image2 = cv2.split( image2 )
-    sub_data = 0
-    for im1, im2 in zip( sub_image1, sub_image2 ):
-        sub_data += calculate( im1, im2 )
-    sub_data = sub_data / 3
-    return sub_data
+def classify_hist_with_split(image1, goods,count =3):
+    size = (256, 256)
+    if count:
+        try:
+            # 将图像resize后，分离为三个通道，再计算每个通道的相似值
 
+            image1 = cv2.resize( image1, size )
+            sub_image1 = cv2.split( image1 )
+
+            hists = []
+            for good in goods:
+                sub_data_temp = 0
+                url = good['pic_url']
+                image = url_to_image( url )
+
+                image2 = cv2.resize( image, size )
+                sub_image2 = cv2.split( image2 )
+
+                for im1, im2 in zip( sub_image1, sub_image2 ):
+                    sub_data_temp += calculate( im1, im2 )
+                good['hist'] = sub_data_temp / 3
+                hists.append(good['hist'])
+            return hists
+        except:
+            classify_hist_with_split(image1, goods,count-1)
+    else:
+        print('对比图片失败')
 
 # 平均哈希算法计算
 def classify_aHash(image1, image2):

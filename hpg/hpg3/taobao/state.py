@@ -10,6 +10,9 @@ import cv2
 import random
 import datetime
 import sys
+from hpg.hpg3.ulity.china_time import chinatime
+from hpg.hpg3.ulity.sms_twilio import msm
+
 
 _output = sys.stdout
 
@@ -35,11 +38,8 @@ class Taobao_thread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__( self )
 
-        hpg_thread = HPG_thread( normal=False )
-        hpg_thread.start()
-
         taobao.connect_chrome()
-        #taobao.chek_login()
+        taobao.chek_login()
         taobao.start_refresh_thread( delay=60 )
 
 
@@ -47,56 +47,72 @@ class Taobao_thread(threading.Thread):
 
         while True:
             if hpg.is_connectedChrome_loginHPG_receivedTask():
-                good_pic = image.url_to_image( hpg.taskInfo['main_link'] )
-                for page in range( 10 ):
-
+                target_pic = image.url_to_image( hpg.taskInfo['main_link'] )
+                find = False
+                for page in range( 15 ):
 
                     url = taobao.get_url( hpg.taskInfo['keyword'], page * 44 )
-                    #print( url )
+
 
                     taobao.threadLock.acquire()
-                    taobao.driver.get( url )
-                    goods = taobao.get_goods()
+                    try:
+                        taobao.driver.get( url )
+                        goods = taobao.get_goods()
+                    except:
+                        print('taobao打开页面{}失败:{}'.format(page,url))
+
                     taobao.threadLock.release()
 
-                    # print( goods )
+                    try:
+                        print( chinatime.getChinaTime(), '对比页面{}图片'.format( page ) )
+                        hists = image.classify_hist_with_split( target_pic, goods )
+                        print( chinatime.getChinaTime(), '页面{}，hists:{}'.format(page,hists) )
+
+                    except:
+                        print('对比图失败')
+                        continue
                     for good in goods:
-                        url = good['pic_url']
-                        # print(url)
-                        # starttime = datetime.datetime.now()
-                        search_pic = image.url_to_image( url )
-                        # endtime = datetime.datetime.now()
-                        # print('下载及读取图片用时:',(endtime - starttime).seconds,url)
-                        # cv2.imshow( "search_pic", search_pic )
-                        # cv2.waitKey( 0 )
-
-                        # starttime = datetime.datetime.now()
-                        hist = image.classify_hist_with_split( good_pic, search_pic )
-                        # endtime = datetime.datetime.now()
-                        # print('比较图片用时:', (endtime - starttime).seconds)
-                        # ahash = image.classify_aHash( good_pic, search_pic )
-                        # phash = image.classify_pHash( good_pic, search_pic )
-
-                        print( 'page:{},id:{},hist:{}'.format( page, good['id'], hist ) )
-                        if hist == 1:
+                        if good['hist']>0.95:
                             find_url = good['good_url']
-                            print( '找到类似图片', hist, find_url )
+                            print( chinatime.getChinaTime(),'找到类似图片', good['hist'], find_url )
 
                             hpg.threadLock.acquire()
-                            if hpg.check_goods(find_url):
-                                hpg.submit()
+                            check = hpg.check_goods(find_url)
+                            hpg.threadLock.release()
+
+                            if check:
+
+                                taobao.threadLock.acquire()
+                                taobao.driver.get( good['good_url'] )
+                                taobao.threadLock.release()
+
+                                time.sleep(30)
+
+                                if not hpg.today:
+                                    msm( hpg.taskInfo, find_url )
+                                else:
+                                    hpg.threadLock.acquire()
+                                    hpg.submit()
+                                    hpg.threadLock.release()
+
+                                find = True
                                 break
-                            hpg.threadLock.acquire()
 
-                print( '实在没找到，取消订单' )
-                hpg.threadLock.acquire()
-                hpg.cancle()
-                taobao.threadLock.release()
+                    if find == True:
+                        break
+
+                if find == False:
+                    print( '没找到宝贝，取消订单' )
+                    hpg.threadLock.acquire()
+                    hpg.cancle()
+                    hpg.threadLock.release()
+                    time.sleep(15)
 
             time.sleep( 5 )
 
 if __name__ == '__main__':
-
+    hpg_thread = HPG_thread()
+    hpg_thread.start()
 
     taobao_thread = Taobao_thread()
     taobao_thread.start()

@@ -27,7 +27,10 @@ class Refresh(threading.Thread):
         while(1):
             self.threadLock.acquire()
             #print(now.getChinaTime(),'刷新chrome')
-            self.driver.refresh()
+            try:
+                self.driver.refresh()
+            except:
+                print('刷新失败')
             time.sleep(1)
             self.threadLock.release()
 
@@ -70,7 +73,7 @@ class Chrome():
 
     def newChrome(self):
         options = webdriver.ChromeOptions()
-        options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})  # 不加载图片,加快访问速度
+        #options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})  # 不加载图片,加快访问速度
         options.add_experimental_option('excludeSwitches',
                                         ['enable-automation'])  # 此步骤很重要，设置为开发者模式，防止被各大网站识别出来使用了Selenium
 
