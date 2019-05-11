@@ -13,3 +13,4 @@ __pycache__/
 *.dat.*
 *.png
 sms_qcloud.py
+taobao_cookie.py
