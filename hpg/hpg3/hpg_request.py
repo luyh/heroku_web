@@ -1,11 +1,10 @@
-import string
 import random
 import hashlib
-import requests
-import time,os
+import time,os,pickle,threading
 from hpg.hpg3.ulity.china_time import chinatime
-from requests_html import HTMLSession
+from hpg.hpg3.ulity.sms_twilio import msm
 
+from requests_html import HTMLSession
 session = HTMLSession()
 
 class HPG():
@@ -13,9 +12,11 @@ class HPG():
         self.username = username
         self.password = password
 
+        self.url = 'http://hpg.sqk2.cn'
+
         self.headers = {
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'Host': "hpg.sqk2.cn",
+            'Host': self.url,
             'Proxy-Connection': "keep-alive",
             'Cache-Control': "max-age=0",
             'Upgrade-Insecure-Requests': "1",
@@ -27,19 +28,37 @@ class HPG():
             'Content-Type': "application/x-www-form-urlencoded",
             'cache-control': "no-cache",
         }
-
-        self.cookies = self._generate_cookies()
+        try:
+            with open('hpg.cookies','rb') as f:
+                self.cookies = pickle.load(f)
+            print(self.cookies)
+            print('load cookies success')
+        except:
+            print('load cookies error')
+            self.cookies = None
 
         self.normal = 0
         self.activity = 0
         self.traffic = 0
 
-        self.received = 0
+        self.received = False
+        self.Login = False
+        self.Keep_alive = True
+
+        self.threadLock = threading.Lock
 
         self.debug = debug
 
-    def task(self):
+    def cancle(self):
+        self.set_running_status(0,0,0)
+
+    def receive_task(self):
         url = 'http://hpg.sqk2.cn/public/apprentice.php/task/index.html'
+        response = session.get(url)
+        print(response.html.html)
+        operation_form = response.html.find('#operation-form')
+        print(operation_form.html)
+        print( operation_form.attrs['action'] )
 
 
     def debug(fn):
@@ -52,6 +71,9 @@ class HPG():
     def request_continue(self,wait_time=60):
         while self.is_running():
             self.ajax_queue_up()
+            if self.received:
+                self.receive_task()
+                break
             time.sleep(wait_time)
 
     @debug
@@ -64,7 +86,7 @@ class HPG():
             'traffic': self.traffic,
             't': random.random()
         }
-        response = requests.post( url, data=data,cookies = self.cookies,headers=self.headers ).json()
+        response = session.post( url, data=data,headers=self.headers ).json()
 
         if response['normal_stop']:self.normal=0
         if response['activity_stop']:self.activity=0
@@ -72,10 +94,10 @@ class HPG():
 
         if response['task']:
             self.received=1
+            msm('接到红苹果任务')
+
 
         return response
-
-
 
     def is_running(self):
         return self.normal or self.activity or self.traffic
@@ -91,39 +113,80 @@ class HPG():
 
     @debug
     def login(self):
+        if self.checklogin():
+            if not self.Login:
+                session.cookies = self.cookies
+                self.Login = True
+                self.checklogin()
+        else:
+            self.ajax_login()
+
+        if self.Login:
+            print('刷新保持登陆')
+            t = threading.Thread( target=self.checklogin, name='Checklgin_Thread' )
+            t.start()
+            return True
+    @debug
+    def ajax_login(self):
         url = "http://hpg.sqk2.cn/public/apprentice.php/passport/ajax_login.html"
 
         data = {'username': self.username,
-                'password': self._md5(self.password),
+                'password': self._md5( self.password ),
                 'remember': 0,
                 'callback': '',
                 't': random.random()}
 
-        response = requests.post(url, data=data, cookies=self.cookies, headers=self.headers ).json()
+        response = session.post( url, data, headers=self.headers )
+        if response.status_code == 200:
+            if response.json()['success'] == 1:
+                self.cookies = session.cookies
+                print( self.cookies )
+                with open( 'hpg.cookies', 'wb' ) as f:
+                    pickle.dump( self.cookies, f )
+                print( 'save cookies done' )
+                self.Login = True
+        else:
+            self.Login = False
+            print( 'hpg not login' )
 
-        return response
-
-    @debug
-    def _generate_cookies(self):
-        cookie_value = ''.join( random.sample( string.ascii_letters + string.digits, 26 ) )
-        # cookies = {'apprentice':'m4jri5j1n1ase9p0j3fsng3kf1'}
-        cookies = {'apprentice': cookie_value}
-        return cookies
+        return response.json()
 
     def _md5(self,password):
         hash = hashlib.md5()
         hash.update( bytes( password, encoding='utf-8' ) )
         return hash.hexdigest()
 
+    def checklogin(self):
+        url = 'http://hpg.sqk2.cn/public/apprentice.php/task/index.html'
+        response = session.get( url, cookies=self.cookies, headers=self.headers )
+        #print(response.html.html)
+        wait = response.html.find( 'b#wait', first=True )
+        if wait:
+            return False
+        else:
+            return True
+
+    def keep_alive(self):
+        while(self.Keep_alive):
+            self.checklogin()
+            time.sleep(60)
+
 if __name__ == '__main__':
     username = os.environ.get( 'HPG_USER' )  # 用户名
     password = os.environ.get( 'HPG_PASS' )  #
 
+    print(username,password)
+
     hpg = HPG(username,password,debug=True)
 
-    response = hpg.login()
+    hpg.login()
     time.sleep(2)
 
-    hpg.set_running_status(1,1,0)
+    if hpg.received == False:
+        hpg.set_running_status(0,0,1)
 
-    hpg.request_continue()
+        hpg.request_continue()
+
+        hpg.receive_task()
+
+

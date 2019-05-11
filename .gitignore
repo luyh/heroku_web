@@ -14,3 +14,4 @@ __pycache__/
 *.png
 sms_qcloud.py
 taobao_cookie.py
+hpg.cookies
