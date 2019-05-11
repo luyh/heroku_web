@@ -2,6 +2,8 @@ import cv2
 import queue
 import os,time,sys
 import numpy as np
+from hpg.hpg3.taobao.image import url_to_image
+
 #灰度
 def _get_dynamic_binary_image(img):
     # 灰值化
@@ -284,33 +286,41 @@ def cut_img(img):
 
 def sav_img(result):
         timestamp = int(time.time() * 1e6) # 为防止文件重名，使用时间戳命名文件名
-        filename = "vertification_code_image/numbers/{}.jpg".format(timestamp)
+        filename = "vertify_code_recognize/vertification_code_image/numbers/{}.jpg".format(timestamp)
         cv2.imwrite(filename, result[0])
 
         timestamp = int( time.time() * 1e6 )  # 为防止文件重名，使用时间戳命名文件名
-        filename = "vertification_code_image/compute/{}.jpg".format( timestamp )
+        filename = "vertify_code_recognize/vertification_code_image/compute/{}.jpg".format(timestamp)
         cv2.imwrite( filename, result[1] )
 
         timestamp = int( time.time() * 1e6 )  # 为防止文件重名，使用时间戳命名文件名
-        filename = "vertification_code_image/numbers/{}.jpg".format( timestamp )
+        filename = "vertify_code_recognize/vertification_code_image/numbers/{}.jpg".format(timestamp)
         cv2.imwrite( filename, result[2] )
 
-from hpg.hpg3.zkb_request import ZKB
-def zkb_save_imgs(count=1):
-    zkb = ZKB()
+
+def zkb_save_imgs(count=1,debug=False):
+    url = 'http://zhuankeban.com/verificationCode.jpg'
 
     for i in range(count):
-        image = zkb._get_verification_code_jpg()
+        image = url_to_image( url)
+        if debug:
+            print('查看验证码')
+            cv2.imshow('vcode.jpg',image)
+            print(image.shape)
+            cv2.waitKey(0)
+
         result = cut_img( image )
         sav_img( result )
+        print('save img done')
 
-    time.sleep(1)
+        time.sleep(1)
 
 def biaozhu():
     for path in ['numbers','compute']:
-        files = os.listdir( "vertification_code_image/{}".format(path) )
+
+        files = os.listdir( "vertify_code_recognize/vertification_code_image/{}".format(path) )
         for filename in files:
-            filepath = 'vertification_code_image/{}/{}'.format(path,filename)
+            filepath = 'vertify_code_recognize/vertification_code_image/{}/{}'.format(path,filename)
             im = cv2.imread( filepath )
             cv2.imshow(filename, im)
             key = cv2.waitKey( 0 )
@@ -325,7 +335,7 @@ def biaozhu():
                 char = chr( key )
 
             print(key,char)
-            filename = "vervification_code_lable/{}/{}_{}".format( path,char,filename )
+            filename = "vertify_code_recognize/vervification_code_lable/{}/{}_{}".format( path,char,filename )
             cv2.imwrite( filename, im )
 
 import pickle
@@ -412,16 +422,24 @@ def count(img,debug=False):
     compute = read_vertify_code( 'compute', [compute] )[0]
 
     if debug:
-        cv2.imshow('img.jpg',img)
         print( num1, compute, num2 )
 
     if compute == '加': return int(num1)+int(num2)
     if compute == '减': return int(num1)-int(num2)
     if compute == '乘': return int(num1)*int(num2)
-    if compute == '除': return int(num1)/int(num2)
-
+    if compute == '除' and int(num2) !=0:
+        return int(int(num1)/int(num2))
+    else:
+        return 0
 
 if __name__ == '__main__':
+
+    train = 1
+
+    if train:
+        zkb_save_imgs(10)
+        biaozhu()
+        model_train()
 
     img = cv2.imread( 'vertify_code_recognize/verificationCode.jpg' )
     cv2.imshow('origin.jpg',img)
