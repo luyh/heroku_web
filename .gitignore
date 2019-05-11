@@ -12,3 +12,4 @@ __pycache__/
 *.jpg
 *.dat.*
 *.png
+sms_qcloud.py
