@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html class="ui-mobile"><head><base href="http://hpg.sqk2.cn/public/apprentice.php/passport/login.html?callback=/public/apprentice.php/task/index.html">
+<html>
+<head>
 
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>T - 上海发传单</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="stylesheet" type="text/css" href="/public/static/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.css"><link rel="stylesheet" type="text/css" href="/public/static/css/mobile.css">
+    <link rel="stylesheet" type="text/css" href="http://hpg.sqk2.cn/public/static/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.css" /><link rel="stylesheet" type="text/css" href="http://hpg.sqk2.cn/public/static/css/mobile.css" />
 
 
 
@@ -31,7 +32,7 @@
 
     @media (min-width: 28em) {
         /*Repeated from rule .ui-flipswitch above*/
-        &nbsp;.ui-field-contain > label + .remember-password.ui-flipswitch {
+         .ui-field-contain > label + .remember-password.ui-flipswitch {
             width: 1.875em;
         }
     }
@@ -55,7 +56,7 @@
 
 
 </head>
-<body class="ui-mobile-viewport ui-overlay-a" style="">
+<body>
 <script>
     var WebsitePath = {
         'root': "/public",
@@ -72,39 +73,48 @@
         }
     }
 </script>
-<script type="text/javascript" src="/public/static/jquery-2.1.1/jquery.min.js"></script><script type="text/javascript" src="/public/static/js/jquery.cookie.js"></script><script type="text/javascript" src="/public/static/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js"></script>
-<script type="text/javascript" src="/public/static/js/mobile.js?v=181117"></script>
-<script type="text/javascript" src="/public/static/js/jquery.md5.js"></script>
-<div data-role="page" id="main-page" data-title="T - 上海发传单" data-url="main-page" tabindex="0" class="ui-page ui-page-theme-a ui-page-header-fixed ui-page-active" style="padding-top: 44px; min-height: 768px;">
+<script type="text/javascript" src="http://hpg.sqk2.cn/public/static/jquery-2.1.1/jquery.min.js"></script><script type="text/javascript" src="http://hpg.sqk2.cn/public/static/js/jquery.cookie.js"></script><script type="text/javascript" src="http://hpg.sqk2.cn/public/static/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="http://hpg.sqk2.cn/public/static/js/mobile.js?v=181117"></script>
+<script type="text/javascript" src="http://hpg.sqk2.cn/public/static/js/jquery.md5.js"></script>
+<div data-role="page" id="main-page" data-title="T - 上海发传单助手">
 
 
-    <div data-role="header" data-position="fixed" data-tap-toggle="false" role="banner" class="ui-header ui-bar-inherit ui-header-fixed slidedown">
-                <h1 class="ui-title" role="heading" aria-level="1">登录</h1>
+    <div data-role="header" data-position="fixed" data-tap-toggle="false">
+
+        <h2>接单助手 登录</h2>
 
     </div>
 
 
 
-    <div data-role="content" class="ui-content" role="main">
+    <div data-role="content" class="ui-content">
 
-<form id="login-form">
-    <input type="hidden" id="callback" value="/public/apprentice.php/task/index.html">
-    <div data-role="fieldcontain" class="ui-field-contain">
+<form id="login-form" action="/hpg/" method="post">
+    {% csrf_token %}
+    <input type="hidden" id="callback" value=""/>
+    <div data-role="fieldcontain">
         <label for="username">账号:</label>
-        <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset ui-input-has-clear"><input type="text" data-clear-btn="true" name="username" id="username" value="" placeholder="请输入账号"><a href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden" title="Clear text">Clear text</a></div>
+        <input type="text" data-clear-btn="true" name="username"
+               id="username" value="" placeholder="请输入账号"/>
     </div>
-    <div data-role="fieldcontain" class="ui-field-contain">
+    <div data-role="fieldcontain">
         <label for="password">密码:</label>
-        <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset ui-input-has-clear"><input type="password" data-clear-btn="true" name="password" id="password" value="" placeholder="请输入密码"><a href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden" title="Clear text">Clear text</a></div>
+        <input type="password" data-clear-btn="true" name="password"
+               id="password"  value="" placeholder="请输入密码" />
     </div>
-    &nbsp;&nbsp;<div class="ui-flipswitch ui-shadow-inset ui-bar-inherit remember-password ui-corner-all"><a href="#" class="ui-flipswitch-on ui-btn ui-shadow ui-btn-inherit">记住账号密码</a><span class="ui-flipswitch-off">记住账号密码</span><input type="checkbox" class="ui-mini ui-flipswitch-input" data-role="flipswitch" name="remember" id="remember" data-on-text="记住账号密码" data-off-text="记住账号密码" data-wrapper-class="remember-password" tabindex="-1"></div>
+      <input type="checkbox" class="ui-mini" data-role="flipswitch" name="remember" id="remember"
+             data-on-text="记住账号密码" data-off-text="记住账号密码" data-wrapper-class="remember-password"
+             />
+
+    <input type="submit" id="login-btn" class="ui-btn ui-corner-all ui-shadow" value="登陆">
 </form>
-<a href="#" class="ui-btn ui-corner-all ui-shadow" id="login-btn">登录</a>
+    <p>{{ username }}</p>
+    <p>{{ login_status }}</p>
 
 <div id="bottom-operation" class="clearfix">
 
-    <a href="/public/apprentice.php/user/forget_password.html" data-ajax="false" class="find-password ui-link">忘记密码？</a>
-        <div class="right">还没有账号？<a href="/public/apprentice.php/passport/register.html" class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-ajax="false" data-inline="true">立即注册</a></div>
+    <a href="http://hpg.sqk2.cn/public/apprentice.php/user/forget_password.html" data-ajax="false" class="find-password">忘记密码？</a>
+        <div class="right">还没有账号？<a href="http://hpg.sqk2.cn/public/apprentice.php/passport/register.html" class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-ajax="false" data-inline="true">立即注册</a></div>
     </div>
 
     </div>
@@ -114,7 +124,7 @@
 </div>
 
 
-<div data-role="page" data-dialog="true" id="find-password-page" data-url="find-password-page">
+<div data-role="page" data-dialog="true" id="find-password-page">
     <div data-role="header">
         <h1>找回密码</h1>
     </div>
@@ -153,7 +163,7 @@
             }else {
                 $password.lsRemoveValidateMessage();
             }
-            login();
+
         });
 
         function login() {
@@ -168,7 +178,7 @@
                 data.password = $.md5(data.password);
             }
 
-            $.post("/public/apprentice.php/passport/ajax_login.html", data, function (data, textStatus) {
+            $.post("http://hpg.sqk2.cn/public/apprentice.php/passport/ajax_login.html", data, function (data, textStatus) {
                 try {
                     if(!(data = $.mobile.ls.handleResponseJson(data))) return;
                     if (!data.success) {
@@ -185,6 +195,5 @@
     });
 </script>
 
-
-
-<div class="ui-loader ui-corner-all ui-body-a ui-loader-default"><span class="ui-icon-loading"></span><h1>loading</h1></div></body></html>
+</body>
+</html>

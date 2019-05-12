@@ -28,14 +28,7 @@ class HPG():
             'Content-Type': "application/x-www-form-urlencoded",
             'cache-control': "no-cache",
         }
-        try:
-            with open('hpg.cookies','rb') as f:
-                self.cookies = pickle.load(f)
-            print(self.cookies)
-            print('load cookies success')
-        except:
-            print('load cookies error')
-            self.cookies = None
+        self.cookies = None
 
         self.normal = 0
         self.activity = 0
@@ -113,6 +106,9 @@ class HPG():
 
     @debug
     def login(self):
+        if self.username ==None or self.password == None:
+            return False
+
         if self.checklogin():
             if not self.Login:
                 session.cookies = self.cookies
@@ -157,6 +153,19 @@ class HPG():
         return hash.hexdigest()
 
     def checklogin(self):
+        # Todo:根据用户加载cookies
+        return False
+
+        try:
+            with open('hpg.cookies','rb') as f:
+                self.cookies = pickle.load(f)
+            print(self.cookies)
+            print('load cookies success')
+        except:
+            print('load cookies error')
+            self.cookies = None
+
+
         url = 'http://hpg.sqk2.cn/public/apprentice.php/task/index.html'
         response = session.get( url, cookies=self.cookies, headers=self.headers )
         #print(response.html.html)
@@ -167,7 +176,8 @@ class HPG():
             return True
 
     def keep_alive(self):
-        while(self.Keep_alive):
+        #Todo:暂时取消保持连接
+        while(False):
             self.checklogin()
             time.sleep(60)
 
@@ -175,7 +185,7 @@ if __name__ == '__main__':
     username = os.environ.get( 'HPG_USER' )  # 用户名
     password = os.environ.get( 'HPG_PASS' )  #
 
-    print(username,password)
+    print('帐号：{}，密码：{}'.format(username,password))
 
     hpg = HPG(username,password,debug=True)
 

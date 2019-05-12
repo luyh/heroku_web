@@ -5,7 +5,7 @@ import os
 # Your Account Sid and Auth Token from twilio.com/console
 account_sid = os.environ.get( 'account_sid' )
 auth_token = os.environ.get( 'auth_token' )
-print(account_sid,auth_token)
+print('twillo account_id:{},auth_token:{}'.format(account_sid,auth_token))
 client = Client(account_sid, auth_token)
 
 def msm(msg='test'):
