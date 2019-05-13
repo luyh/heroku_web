@@ -58,7 +58,7 @@ class HPG():
         def log(self):
             if self.debug:
                 print( chinatime.getChinaTime(),fn.__name__,fn(self))
-        return log
+        return fn
 
     @debug
     def request_continue(self,wait_time=60):
@@ -127,7 +127,7 @@ class HPG():
         url = "http://hpg.sqk2.cn/public/apprentice.php/passport/ajax_login.html"
 
         data = {'username': self.username,
-                'password': self._md5( self.password ),
+                'password': self.password ,
                 'remember': 0,
                 'callback': '',
                 't': random.random()}
@@ -189,14 +189,7 @@ if __name__ == '__main__':
 
     hpg = HPG(username,password,debug=True)
 
-    hpg.login()
-    time.sleep(2)
+    response = hpg.ajax_login()
 
-    if hpg.received == False:
-        hpg.set_running_status(0,0,1)
-
-        hpg.request_continue()
-
-        hpg.receive_task()
-
+    print(response)
 

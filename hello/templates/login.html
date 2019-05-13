@@ -89,7 +89,7 @@
 
     <div data-role="content" class="ui-content">
 
-<form id="login-form" action="/hpg/" method="post">
+<form id="login-form" action="/post/" method="post">
     {% csrf_token %}
     <input type="hidden" id="callback" value=""/>
     <div data-role="fieldcontain">
@@ -106,10 +106,11 @@
              data-on-text="记住账号密码" data-off-text="记住账号密码" data-wrapper-class="remember-password"
              />
 
-    <input type="submit" id="login-btn" class="ui-btn ui-corner-all ui-shadow" value="登陆">
 </form>
-    <p>{{ username }}</p>
-    <p>{{ login_status }}</p>
+
+<a href="#" class="ui-btn ui-corner-all ui-shadow" id="login-btn">登录</a>
+
+
 
 <div id="bottom-operation" class="clearfix">
 
@@ -163,7 +164,7 @@
             }else {
                 $password.lsRemoveValidateMessage();
             }
-
+            login()
         });
 
         function login() {
@@ -178,7 +179,11 @@
                 data.password = $.md5(data.password);
             }
 
-            $.post("http://hpg.sqk2.cn/public/apprentice.php/passport/ajax_login.html", data, function (data, textStatus) {
+            $.ajaxSetup({
+                            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+                        });
+
+            $.post("/ajax_login/", data, function (data, textStatus) {
                 try {
                     if(!(data = $.mobile.ls.handleResponseJson(data))) return;
                     if (!data.success) {

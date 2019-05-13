@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from hpg.hpg3.hpg_request import HPG
-import os,time
+import os,time,json
 
 
 # hpg.set_running_status(0,0,1)
@@ -11,56 +12,30 @@ import os,time
 # hpg.receive_task()
 
 # Create your views here.
-def hpg(request):
-    ctx = {}
-    username='空'
-    password=None
+def login(request):
+    return render( request, "login.html" )
 
-    if request.POST:
-        username = request.POST['username']
-        password = request.POST['password']
+def ajax_login(request):
+    username = request.POST['username']
+    password = request.POST['password']
 
-        if username==None:username='空'
+    # username = os.environ.get( 'HPG_USER' )  # 用户名
+    # password = os.environ.get( 'HPG_PASS' )  #
 
-        # username = os.environ.get( 'HPG_USER' )  # 用户名
-        # password = os.environ.get( 'HPG_PASS' )  #
+    print( username, password )
 
+    hpg = HPG( username, password, debug=True )
 
-        print( username, password )
+    response = hpg.ajax_login()
+    print(response)
 
-        hpg = HPG( username, password, debug=True )
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
-        hpg.login()
+def index(request):
+    response = redirect('../user/index.html')
 
-        ctx['username'] = '您登陆的用户名为:'+username
-        if hpg.Login:
-            ctx['login_status'] = '您已登后台陆红苹果后台接单用手'
-        else:
-            ctx['login_status'] = '登陆失败，请检查红苹果帐号密码是否正确'
+    return response
 
-    return render( request, "login.html", ctx )
-
-def post(request):
-    ctx = {}
-
-    if request.POST:
-        username = request.POST['username']
-        password = request.POST['password']
-
-        # username = os.environ.get( 'HPG_USER' )  # 用户名
-        # password = os.environ.get( 'HPG_PASS' )  #
-
-        print( username, password )
-
-        hpg = HPG( username, password, debug=True )
-
-        ctx['username'] = '您登陆的帐号为：{username}'.format()
-        if hpg.Login:
-            ctx['login_status'] = '您已登后台陆红苹果'
-        else:
-            ctx['login_status'] = '登陆失败，请检查帐号密码是否正确'
-
-    return render( request, "login.html", ctx )
-
-
+def user(request):
+    return HttpResponse('user page')
 

@@ -21,5 +21,9 @@ urlpatterns = [
     path("db/", hello.views.db, name="db"),
     path("admin/", admin.site.urls),
     path('hello/', hello.views.hello),
-    path('hpg/', hpg.views.hpg,name = 'hpg'),
+
+    re_path(r'passport/login.html$', hpg.views.login,name = 'login'),
+    path('ajax_login/', hpg.views.ajax_login,name = 'ajax_login'),
+    re_path(r'index/index.html$',hpg.views.index),
+    re_path(r'user/index.html$',hpg.views.user)
 ]
