@@ -57,10 +57,13 @@ class HPG_thread(threading.Thread):
             hpg.CheckLogin()
 
             if hpg.is_connectedChrome_loginHPG( allow_substates=True ):
+
                 if not hpg.today_finish():
                     hpg.QuereTask( normal= True)
                 else:
                     hpg.QuereTask(normal = False)
+
+                print(hpg.today)
 
                 hpg.ReceiveTask()
 

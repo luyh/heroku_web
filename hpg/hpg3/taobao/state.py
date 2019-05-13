@@ -11,7 +11,7 @@ import random
 import datetime
 import sys
 from hpg.hpg3.ulity.china_time import chinatime
-from hpg.hpg3.ulity.sms_twilio import msm
+# from hpg.hpg3.ulity.sms_twilio import msm
 
 
 _output = sys.stdout
@@ -89,7 +89,8 @@ class Taobao_thread(threading.Thread):
                                 time.sleep(30)
 
                                 if not hpg.today:
-                                    msm( hpg.taskInfo, find_url )
+                                    # msm( hpg.taskInfo, find_url )
+                                    print(hpg.taskInfo, find_url)
                                 else:
                                     hpg.threadLock.acquire()
                                     hpg.submit()

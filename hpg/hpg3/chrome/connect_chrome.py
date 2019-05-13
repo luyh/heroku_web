@@ -94,7 +94,7 @@ class Chrome():
 
 
         elif systerm.startswith('win32'):
-            driver = webdriver.Chrome(executable_path='E:\luyh\heroku\calm-scrubland-72089\hpg\hpg3\chrome\chromedriver.exe', chrome_options=options)
+            driver = webdriver.Chrome(executable_path='E:\luyh\PycharmProjects\calm-scrubland-72089\hpg\hpg3\chrome\chromedriver.exe', chrome_options=options)
         time.sleep(3)
 
         #print(u'已新建chrome浏览器，并成功连接')

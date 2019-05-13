@@ -12,3 +12,4 @@ __pycache__/
 *.jpg
 *.dat.*
 *.png
+hpg/hpg3/taobao/taobao_cookie.py

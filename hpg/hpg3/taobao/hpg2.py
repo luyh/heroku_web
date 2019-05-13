@@ -5,6 +5,7 @@ import threading
 
 
 
+
 class HPG(Chrome):
     def __init__(self,name = 'hpg',debug = False,mobileEmulation = None):
         self.name = name
