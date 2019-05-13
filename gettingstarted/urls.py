@@ -21,5 +21,5 @@ urlpatterns = [
     path("db/", hello.views.db, name="db"),
     path("admin/", admin.site.urls),
     path('hello/', hello.views.hello),
-    path('zkb/', hpg.views.zkb,name = 'zkb'),
+    path('hpg/', hpg.views.hpg,name = 'hpg'),
 ]

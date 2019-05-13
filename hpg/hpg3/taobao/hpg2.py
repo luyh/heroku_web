@@ -34,6 +34,7 @@ class HPG(Chrome):
 
         self.taskInfo = None
         self.taskInfoFlag = False
+        self.today = 0
 
         self.now = china_time.ChinaTime()
 
@@ -74,6 +75,7 @@ class HPG(Chrome):
     def queue_task(self,normal = True):
         #print( '检查我要买' )
         if self.driver.current_url == self.task_url:
+            self.today_finish()
             if normal:
                 try:
                     normal_task = self.driver.find_element_by_id( 'normal-task' )
@@ -253,6 +255,7 @@ if __name__ == '__main__':
     hpg.check_login()
 
     hpg.today_finish()
+    print(hpg.today)
     exit()
     print('订阅任务')
     hpg.queue_task()

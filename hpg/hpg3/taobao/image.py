@@ -30,11 +30,14 @@ def resize(img):
     return res
 import datetime
 
-def url_to_image(url,count =3):
+def url_to_image(url,cookies=None,count =3):
     try:
         if count >0:
             #starttime = datetime.datetime.now()
-            resp = requests.get( url )
+            if cookies:
+                resp = requests.get( url ,cookies = cookies)
+            else:
+                resp = requests.get( url)
             #endtime = datetime.datetime.now()
             #print('下载图片用时:', (endtime - starttime).seconds, url)
 

@@ -13,3 +13,4 @@ __pycache__/
 *.dat.*
 *.png
 hpg/hpg3/taobao/taobao_cookie.py
+hpg.cookies

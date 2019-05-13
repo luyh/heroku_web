@@ -1,7 +1,7 @@
 from hpg.hpg3.chrome.connect_chrome import Chrome
 from hpg.hpg3.ulity import china_time,send_email
 import os,time
-
+import threading
 
 class ZKB(Chrome):
 
@@ -9,6 +9,8 @@ class ZKB(Chrome):
     def __init__(self, name='zkb', debug=False, mobileEmulation=None):
         self.name = name
         self.driver = None
+
+        self.threadLock = threading.Lock()
 
         self.username = os.environ.get( 'HPG_USER' )  # 用户名
         self.password = os.environ.get( 'HPG_PASS' )  #
@@ -182,4 +184,6 @@ class ZKB(Chrome):
 
 
 
-
+if __name__ == '__main__':
+    zkb = ZKB()
+    zkb.connectChrome()
