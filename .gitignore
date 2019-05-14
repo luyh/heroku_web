@@ -12,6 +12,5 @@ __pycache__/
 *.jpg
 *.dat.*
 *.png
-sms_qcloud.py
-taobao_cookie.py
+hpg/hpg3/taobao/taobao_cookie.py
 hpg.cookies
