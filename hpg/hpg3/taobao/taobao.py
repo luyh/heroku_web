@@ -166,7 +166,7 @@ class Taobao(Chrome):
             'bcoffset': '6',
             'ntoffset': '6',
             'p4ppushleft': '1, 48',
-            's': number_two
+            's': number_two*44
         }
         url = r'https://s.taobao.com/search?' + urlencode(data)
         return url
@@ -187,8 +187,13 @@ if __name__ == '__main__':
     test.driver.get( 'https://www.taobao.com' )
     time.sleep(2)
 
-    url = test.get_url( '裤子', 0 )
-    test.driver.get(url)
+    for page in range(50):
+
+        url = test.get_url( '休闲风男', page )
+        print( page ,url)
+        test.driver.get( url )
+        time.sleep(random.randrange(5,20)+random.random())
+
     time.sleep(10)
 
 
